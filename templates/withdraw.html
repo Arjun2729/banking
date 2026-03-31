@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Withdraw — NexaBank{% endblock %}
+{% block content %}
+
+<div class="page-title">Withdraw Funds</div>
+<div class="page-sub">Withdraw money from one of your accounts.</div>
+
+<div class="form-card">
+  <form method="POST" action="{{ url_for('withdraw') }}" data-once>
+    <div class="mb-3">
+      <label class="form-label">Source Account</label>
+      <select name="account_id" class="form-select" required>
+        {% for acc in accounts %}
+        <option value="{{ acc.id }}" {% if request.args.get('account') == acc.id|string %}selected{% endif %}>
+          {{ acc.account_no }} ({{ acc.account_type }}) — INR {{ "{:,.2f}".format(acc.balance) }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Amount (INR)</label>
+      <input type="text" name="amount" class="form-control amount-input"
+             placeholder="0.00" required inputmode="decimal">
+    </div>
+    <div class="d-flex gap-2 mt-3">
+      <button type="submit" class="btn-primary-bank" style="background:var(--red)"
+              data-confirm="Confirm withdrawal?">Withdraw</button>
+      <a href="{{ url_for('dashboard') }}" class="btn-secondary-bank">Cancel</a>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}NexaBank — Modern Banking{% endblock %}
+{% block content %}
+
+<div class="hero">
+  <div class="hero-content">
+    <h1 class="hero-title">Banking that<br><span>works for you</span></h1>
+    <p class="hero-sub">
+      Manage accounts, transfer funds, and track every transaction —
+      all from one secure dashboard.
+    </p>
+    <div class="hero-actions">
+      <a href="{{ url_for('register') }}" class="btn-primary-bank" style="font-size:1rem;padding:0.8rem 2rem;">
+        Open Account
+      </a>
+      <a href="{{ url_for('login') }}" class="btn-secondary-bank" style="font-size:1rem;padding:0.8rem 2rem;">
+        Sign In
+      </a>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(14,92,173,0.12);color:var(--accent)">&#9673;</div>
+        <div class="feature-title">Multiple Accounts</div>
+        <div class="feature-desc">Open checking and savings accounts and manage all of them from one place.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(16,185,129,0.12);color:var(--green)">&#8644;</div>
+        <div class="feature-title">Instant Transfers</div>
+        <div class="feature-desc">Move money between your accounts instantly with zero fees.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(77,163,255,0.14);color:var(--link)">&#9776;</div>
+        <div class="feature-title">Full History</div>
+        <div class="feature-desc">Every deposit, withdrawal, and transfer is logged with running balances.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(239,68,68,0.12);color:var(--red)">&#128274;</div>
+        <div class="feature-title">Secure</div>
+        <div class="feature-desc">Passwords are hashed. All queries are parameterized. Your data is safe.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

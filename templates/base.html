@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}NexaBank{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="bank-navbar">
+  <a href="{{ url_for('index') }}" class="bank-logo">
+    <div class="logo-icon">&#9670;</div>
+    Nexa<span>Bank</span>
+  </a>
+  {% if nav_user %}
+  <div class="nav-user">
+    <span class="user-name">{{ nav_user.full_name }}</span>
+    <a href="{{ url_for('logout') }}" class="btn-nav-logout">Sign Out</a>
+  </div>
+  {% else %}
+  <div class="nav-user">
+    <a href="{{ url_for('login') }}" class="btn-nav-logout">Log In</a>
+  </div>
+  {% endif %}
+</nav>
+
+<div class="bank-layout">
+  <!-- Sidebar -->
+  {% if nav_user %}
+  <aside class="bank-sidebar">
+    <span class="sidebar-label">Main</span>
+    <a href="{{ url_for('dashboard') }}" class="sidebar-link">
+      <span class="si">&#9632;</span> Dashboard
+    </a>
+    <a href="{{ url_for('accounts') }}" class="sidebar-link">
+      <span class="si">&#9673;</span> Accounts
+    </a>
+    <span class="sidebar-label" style="margin-top:0.5rem">Transactions</span>
+    <a href="{{ url_for('transfer') }}" class="sidebar-link">
+      <span class="si">&#8644;</span> Transfer
+    </a>
+    <a href="{{ url_for('deposit') }}" class="sidebar-link">
+      <span class="si">&#43;</span> Deposit
+    </a>
+    <a href="{{ url_for('withdraw') }}" class="sidebar-link">
+      <span class="si">&#8722;</span> Withdraw
+    </a>
+    <a href="{{ url_for('transactions') }}" class="sidebar-link">
+      <span class="si">&#9776;</span> History
+    </a>
+    <span class="sidebar-label" style="margin-top:0.5rem">Account</span>
+    <a href="{{ url_for('profile') }}" class="sidebar-link">
+      <span class="si">&#9786;</span> Profile
+    </a>
+  </aside>
+  {% endif %}
+
+  <!-- Main content -->
+  <main class="bank-main">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+      <div class="flash-msg flash-{{ category }}">
+        {% if category == 'success' %}&#10003;{% elif category == 'danger' %}&#10007;{% elif category == 'warning' %}&#9888;{% else %}&#9432;{% endif %}
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+{% block scripts %}{% endblock %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

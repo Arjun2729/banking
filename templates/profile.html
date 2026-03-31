@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Profile — NexaBank{% endblock %}
+{% block content %}
+
+<div class="page-title">Profile</div>
+<div class="page-sub">Manage your personal information and security.</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:860px">
+
+  <!-- Update info -->
+  <div class="form-card" style="max-width:100%">
+    <div class="fw-600 mb-3">Personal Information</div>
+    <form method="POST" action="{{ url_for('profile') }}">
+      <input type="hidden" name="action" value="update_info">
+      <div class="mb-3">
+        <label class="form-label">Full name</label>
+        <input type="text" name="full_name" class="form-control" value="{{ user.full_name }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email address</label>
+        <input type="email" class="form-control" value="{{ user.email }}" disabled style="opacity:0.6;cursor:not-allowed">
+        <div class="fs-sm mt-1" style="color:var(--text-muted)">Email cannot be changed.</div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Phone</label>
+        <input type="tel" name="phone" class="form-control" value="{{ user.phone or '' }}" placeholder="Optional">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Member since</label>
+        <input type="text" class="form-control" value="{{ user.created_at.strftime('%B %d, %Y') }}" disabled style="opacity:0.6;cursor:not-allowed">
+      </div>
+      <button type="submit" class="btn-primary-bank">Save Changes</button>
+    </form>
+  </div>
+
+  <!-- Change password -->
+  <div class="form-card" style="max-width:100%">
+    <div class="fw-600 mb-3">Change Password</div>
+    <form method="POST" action="{{ url_for('profile') }}" data-once>
+      <input type="hidden" name="action" value="change_password">
+      <div class="mb-3">
+        <label class="form-label">Current password</label>
+        <input type="password" name="current_password" class="form-control" placeholder="••••••••" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">New password</label>
+        <input type="password" name="new_password" class="form-control" placeholder="Min. 6 chars" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Confirm new password</label>
+        <input type="password" name="confirm_password" class="form-control" placeholder="Repeat" required>
+      </div>
+      <button type="submit" class="btn-danger-bank">Change Password</button>
+    </form>
+  </div>
+
+</div>
+
+{% endblock %}

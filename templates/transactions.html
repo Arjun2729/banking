@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Transaction History — NexaBank{% endblock %}
+{% block content %}
+
+<div class="page-title">Transaction History</div>
+<div class="page-sub">All your transactions across all accounts.</div>
+
+<!-- Filter bar -->
+<form method="GET" action="{{ url_for('transactions') }}">
+  <div class="filter-bar mb-3">
+    <div class="filter-group">
+      <label class="form-label">Account</label>
+      <select name="account" class="form-select">
+        <option value="">All accounts</option>
+        {% for acc in user_accounts %}
+        <option value="{{ acc.id }}" {% if acc_filter == acc.id|string %}selected{% endif %}>
+          {{ acc.account_no }} ({{ acc.account_type }})
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filter-group">
+      <label class="form-label">Type</label>
+      <select name="type" class="form-select">
+        <option value="">All types</option>
+        <option value="deposit"       {% if type_filter == 'deposit'       %}selected{% endif %}>Deposit</option>
+        <option value="withdrawal"    {% if type_filter == 'withdrawal'    %}selected{% endif %}>Withdrawal</option>
+        <option value="transfer_in"   {% if type_filter == 'transfer_in'  %}selected{% endif %}>Transfer In</option>
+        <option value="transfer_out"  {% if type_filter == 'transfer_out' %}selected{% endif %}>Transfer Out</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label class="form-label">From date</label>
+      <input type="date" name="from_date" class="form-control" value="{{ from_date }}">
+    </div>
+    <div class="filter-group">
+      <label class="form-label">To date</label>
+      <input type="date" name="to_date" class="form-control" value="{{ to_date }}">
+    </div>
+    <div class="filter-group" style="justify-content:flex-end">
+      <button type="submit" class="btn-primary-bank">Filter</button>
+    </div>
+    {% if acc_filter or type_filter or from_date or to_date %}
+    <div class="filter-group" style="justify-content:flex-end">
+      <a href="{{ url_for('transactions') }}" class="btn-secondary-bank">Clear</a>
+    </div>
+    {% endif %}
+  </div>
+</form>
+
+{% if txns %}
+<div class="bank-card" style="padding:0;overflow:hidden">
+  <table class="bank-table">
+    <thead>
+      <tr>
+        <th>Date &amp; Time</th>
+        <th>Account</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th style="text-align:right">Amount</th>
+        <th style="text-align:right">Balance After</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in txns %}
+      <tr>
+        <td class="mono fs-sm">{{ t.created_at.strftime('%b %d, %Y %H:%M') }}</td>
+        <td>
+          <a href="{{ url_for('account_detail', acc_id=t.account_id) }}" class="mono fs-sm">{{ t.account_no }}</a>
+          <div class="fs-sm" style="color:var(--text-muted)">{{ t.account_type }}</div>
+        </td>
+        <td><span class="txn-type txn-{{ t.type }}">{{ t.type.replace('_', ' ') }}</span></td>
+        <td class="fs-sm" style="color:var(--text-muted)">{{ t.description or '—' }}</td>
+        <td style="text-align:right">
+          {% if t.type in ('deposit','transfer_in') %}
+            <span class="amount-positive">+INR {{ "{:,.2f}".format(t.amount) }}</span>
+          {% else %}
+            <span class="amount-negative">-INR {{ "{:,.2f}".format(t.amount) }}</span>
+          {% endif %}
+        </td>
+        <td style="text-align:right" class="fw-600 mono">INR {{ "{:,.2f}".format(t.balance_after) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination -->
+{% if total_pages > 1 %}
+<div class="d-flex gap-1 mt-3 align-center">
+  {% set qargs = {'account': acc_filter, 'type': type_filter, 'from_date': from_date, 'to_date': to_date} %}
+  {% if page > 1 %}
+  <a href="{{ url_for('transactions', page=page-1, **qargs) }}" class="page-btn">&larr;</a>
+  {% else %}
+  <span class="page-btn disabled">&larr;</span>
+  {% endif %}
+
+  {% for p in range(1, total_pages + 1) %}
+    {% if p == page %}
+    <span class="page-btn active">{{ p }}</span>
+    {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+    <a href="{{ url_for('transactions', page=p, **qargs) }}" class="page-btn">{{ p }}</a>
+    {% elif p == page - 3 or p == page + 3 %}
+    <span class="page-btn disabled">…</span>
+    {% endif %}
+  {% endfor %}
+
+  {% if page < total_pages %}
+  <a href="{{ url_for('transactions', page=page+1, **qargs) }}" class="page-btn">&rarr;</a>
+  {% else %}
+  <span class="page-btn disabled">&rarr;</span>
+  {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="bank-card" style="text-align:center;padding:3rem;color:var(--text-muted)">
+  No transactions match your filters.
+</div>
+{% endif %}
+
+{% endblock %}

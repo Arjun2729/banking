@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Transfer — NexaBank{% endblock %}
+{% block content %}
+
+<div class="page-title">Transfer Funds</div>
+<div class="page-sub">Move money between your accounts instantly.</div>
+
+{% if accounts|length < 2 %}
+<div class="bank-card" style="color:var(--text-muted);max-width:520px">
+  You need at least two accounts to make a transfer.
+  <a href="{{ url_for('accounts') }}">Open another account &rarr;</a>
+</div>
+{% else %}
+<div class="form-card">
+  <form method="POST" action="{{ url_for('transfer') }}" data-once>
+    <div class="mb-3">
+      <label class="form-label">From Account</label>
+      <select name="from_account" id="from_account" class="form-select" required>
+        {% for acc in accounts %}
+        <option value="{{ acc.id }}">
+          {{ acc.account_no }} ({{ acc.account_type }}) — INR {{ "{:,.2f}".format(acc.balance) }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">To Account</label>
+      <select name="to_account" id="to_account" class="form-select" required>
+        {% for acc in accounts %}
+        <option value="{{ acc.id }}">
+          {{ acc.account_no }} ({{ acc.account_type }}) — INR {{ "{:,.2f}".format(acc.balance) }}
+        </option>
+        {% endfor %}
+      </select>
+      <div id="same-account-error" style="display:none;color:var(--red);font-size:0.82rem;margin-top:0.35rem">
+        Cannot transfer to the same account.
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Amount (INR)</label>
+      <input type="text" name="amount" class="form-control amount-input"
+             placeholder="0.00" required inputmode="decimal">
+    </div>
+    <div class="d-flex gap-2 mt-3">
+      <button type="submit" id="transfer-submit" class="btn-primary-bank">Transfer</button>
+      <a href="{{ url_for('dashboard') }}" class="btn-secondary-bank">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endif %}
+
+{% endblock %}

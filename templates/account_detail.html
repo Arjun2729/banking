@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}{{ acc.account_no }} — NexaBank{% endblock %}
+{% block content %}
+
+<div class="d-flex align-center gap-2 mb-1">
+  <a href="{{ url_for('accounts') }}" class="fs-sm" style="color:var(--text-muted)">&larr; Accounts</a>
+</div>
+
+<div class="d-flex justify-between align-center mb-3">
+  <div>
+    <div style="display:flex;align-items:center;gap:0.75rem">
+      <div class="page-title" style="margin-bottom:0">{{ acc.account_no }}</div>
+      <div class="account-type-badge badge-{{ acc.account_type }}">{{ acc.account_type }}</div>
+    </div>
+    <div class="page-sub">Opened {{ acc.created_at.strftime('%B %d, %Y') }}</div>
+  </div>
+  <div style="text-align:right">
+    <div class="stat-label">Current Balance</div>
+    <div class="stat-value green">INR {{ "{:,.2f}".format(acc.balance) }}</div>
+  </div>
+</div>
+
+<!-- Quick action buttons -->
+<div class="d-flex gap-1 mb-4">
+  <a href="{{ url_for('deposit') }}?account={{ acc.id }}"  class="btn-primary-bank">+ Deposit</a>
+  <a href="{{ url_for('withdraw') }}?account={{ acc.id }}" class="btn-secondary-bank">&#8722; Withdraw</a>
+  <a href="{{ url_for('transfer') }}"                       class="btn-secondary-bank">&#8644; Transfer</a>
+</div>
+
+<!-- Transactions table -->
+<div class="section-heading">Transaction History</div>
+{% if txns %}
+<div class="bank-card" style="padding:0;overflow:hidden">
+  <table class="bank-table">
+    <thead>
+      <tr>
+        <th>Date &amp; Time</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th style="text-align:right">Amount</th>
+        <th style="text-align:right">Balance After</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in txns %}
+      <tr>
+        <td class="mono fs-sm">{{ t.created_at.strftime('%b %d, %Y %H:%M') }}</td>
+        <td><span class="txn-type txn-{{ t.type }}">{{ t.type.replace('_', ' ') }}</span></td>
+        <td class="fs-sm" style="color:var(--text-muted)">{{ t.description or '—' }}</td>
+        <td style="text-align:right">
+          {% if t.type in ('deposit','transfer_in') %}
+            <span class="amount-positive">+INR {{ "{:,.2f}".format(t.amount) }}</span>
+          {% else %}
+            <span class="amount-negative">-INR {{ "{:,.2f}".format(t.amount) }}</span>
+          {% endif %}
+        </td>
+        <td style="text-align:right" class="fw-600">INR {{ "{:,.2f}".format(t.balance_after) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination -->
+{% if total_pages > 1 %}
+<div class="d-flex gap-1 mt-3 align-center">
+  {% if page > 1 %}
+  <a href="?page={{ page - 1 }}" class="page-btn">&larr;</a>
+  {% else %}
+  <span class="page-btn disabled">&larr;</span>
+  {% endif %}
+
+  {% for p in range(1, total_pages + 1) %}
+    {% if p == page %}
+    <span class="page-btn active">{{ p }}</span>
+    {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+    <a href="?page={{ p }}" class="page-btn">{{ p }}</a>
+    {% elif p == page - 3 or p == page + 3 %}
+    <span class="page-btn disabled">…</span>
+    {% endif %}
+  {% endfor %}
+
+  {% if page < total_pages %}
+  <a href="?page={{ page + 1 }}" class="page-btn">&rarr;</a>
+  {% else %}
+  <span class="page-btn disabled">&rarr;</span>
+  {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="bank-card" style="text-align:center;padding:2.5rem;color:var(--text-muted)">
+  No transactions yet.
+  <a href="{{ url_for('deposit') }}">Make your first deposit &rarr;</a>
+</div>
+{% endif %}
+
+{% endblock %}

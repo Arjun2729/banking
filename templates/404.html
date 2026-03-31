@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Not Found — NexaBank{% endblock %}
+{% block content %}
+
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center">
+  <div style="font-size:5rem;font-weight:800;color:var(--navy-600);letter-spacing:-0.04em">
+    {{ error and '500' or '404' }}
+  </div>
+  <div class="page-title mt-2">{{ error or 'Page not found' }}</div>
+  <div class="page-sub">The page you're looking for doesn't exist or you don't have access.</div>
+  <a href="{{ url_for('dashboard') if nav_user else url_for('index') }}" class="btn-primary-bank mt-3">
+    &larr; Go back home
+  </a>
+</div>
+
+{% endblock %}

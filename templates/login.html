@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Sign In — NexaBank{% endblock %}
+{% block content %}
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-title">Welcome back</div>
+    <div class="auth-sub">Sign in to your NexaBank account</div>
+
+    <form method="POST" action="{{ url_for('login') }}" data-once>
+      <div class="mb-3">
+        <label class="form-label">Email address</label>
+        <input type="email" name="email" class="form-control" placeholder="you@example.com" required autofocus>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn-primary-bank w-100" style="margin-top:0.5rem;">Sign In</button>
+    </form>
+
+    <hr class="divider">
+    <p class="fs-sm text-center" style="color:var(--text-muted)">
+      Don't have an account?
+      <a href="{{ url_for('register') }}">Create one</a>
+    </p>
+  </div>
+</div>
+
+{% endblock %}
